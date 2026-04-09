@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar">
+    <aside class="simple-sidebar">
+        <div class="simple-sidebar-logo">
+            <img th:src="@{/images/logo-ccss.png}" alt="Logo CCSS">
+        </div>
+
+        <div class="simple-sidebar-brand">
+            CCSS
+        </div>
+
+        <div class="simple-sidebar-user" th:if="${currentAppUser != null}">
+            <div class="simple-sidebar-user-name"
+                 th:text="${currentAppUser.nombreMostrado != null and !#strings.isEmpty(currentAppUser.nombreMostrado) ? currentAppUser.nombreMostrado : currentAppUser.username}">
+                Usuario
+            </div>
+            <div class="simple-sidebar-user-email"
+                 th:text="${currentAppUser.correo != null ? currentAppUser.correo : currentAppUser.username}">
+                correo@correo.com
+            </div>
+        </div>
+
+        <nav class="simple-sidebar-menu">
+            <a th:each="m : ${allowedModules}"
+               th:href="@{${m.path}}"
+               class="simple-sidebar-link"
+               th:text="${m.name}">
+                Módulo
+            </a>
+
+            <form th:action="@{/logout}" method="post" class="simple-sidebar-logout-form">
+                <button type="submit" class="simple-sidebar-logout-btn">Salir</button>
+            </form>
+        </nav>
+    </aside>
+</div>
+</body>
+</html>

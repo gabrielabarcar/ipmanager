@@ -1,0 +1,258 @@
+-- =========================================================
+-- BASE DE DATOS DE PRUEBAS PARA IPMANAGER
+-- =========================================================
+
+DROP DATABASE IF EXISTS ipmanagerdb_test;
+CREATE DATABASE ipmanagerdb_test CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE ipmanagerdb_test;
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+-- =========================================================
+-- TABLA: app_users
+-- =========================================================
+CREATE TABLE `app_users` (
+  `id` bigint(20) NOT NULL,
+  `apellido1` varchar(100) NOT NULL,
+  `apellido2` varchar(100) DEFAULT NULL,
+  `correo` varchar(150) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
+  `enabled` bit(1) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` varchar(20) NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `username` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================================
+-- TABLA: assigned_ips
+-- =========================================================
+CREATE TABLE `assigned_ips` (
+  `id` bigint(20) NOT NULL,
+  `network_id` bigint(20) NOT NULL,
+  `ip_address` varchar(15) NOT NULL,
+  `ip_as_bigint` bigint(20) NOT NULL,
+  `assigned_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================================
+-- TABLA: audit_logs
+-- =========================================================
+CREATE TABLE `audit_logs` (
+  `id` bigint(20) NOT NULL,
+  `action` varchar(40) NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `detail` varchar(1000) DEFAULT NULL,
+  `entity_id` varchar(80) DEFAULT NULL,
+  `entity_type` varchar(80) NOT NULL,
+  `username` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================================
+-- TABLA: modules
+-- =========================================================
+CREATE TABLE `modules` (
+  `id` bigint(20) NOT NULL,
+  `code` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `path` varchar(200) NOT NULL,
+  `icon` varchar(100) DEFAULT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `enabled` bit(1) NOT NULL DEFAULT b'1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================================
+-- TABLA: networks
+-- =========================================================
+CREATE TABLE `networks` (
+  `id` bigint(20) NOT NULL,
+  `network_ip` varchar(15) NOT NULL,
+  `cidr` int(11) NOT NULL,
+  `network_address_bigint` bigint(20) DEFAULT NULL,
+  `broadcast_address_bigint` bigint(20) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_by` varchar(255) DEFAULT NULL,
+  `enlace` varchar(255) DEFAULT NULL,
+  `es_historico` bit(1) DEFAULT NULL,
+  `motivo_justificacion` varchar(2000) DEFAULT NULL,
+  `nombre_lugar` varchar(255) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `updated_by` varchar(255) DEFAULT NULL,
+  `wan_broadcast` varchar(255) DEFAULT NULL,
+  `wan_cidr` int(11) DEFAULT NULL,
+  `wan_ip` varchar(255) DEFAULT NULL,
+  `wan_ip1` varchar(255) DEFAULT NULL,
+  `wan_ip2` varchar(255) DEFAULT NULL,
+  `tecnologia` varchar(50) DEFAULT NULL,
+  `tipo_lugar` varchar(100) DEFAULT NULL,
+  `velocidad` varchar(50) DEFAULT NULL,
+  `wan_ip_1` varchar(15) DEFAULT NULL,
+  `wan_ip_2` varchar(15) DEFAULT NULL,
+  `acepta_traslape` bit(1) DEFAULT NULL,
+  `traslape_aceptado_at` datetime(6) DEFAULT NULL,
+  `traslape_aceptado_por` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =========================================================
+-- DATOS: modules
+-- =========================================================
+INSERT INTO `modules` (`id`, `code`, `name`, `path`, `icon`, `sort_order`, `enabled`) VALUES
+(1, 'REDES', 'Redes', '/', 'bi-diagram-3', 1, b'1'),
+(2, 'USUARIOS', 'Usuarios', '/users', 'bi-people', 2, b'1'),
+(3, 'BITACORA', 'Bitácora', '/logs', 'bi-journal-text', 3, b'1');
+
+-- =========================================================
+-- DATOS: app_users
+-- =========================================================
+-- NOTA:
+-- Se reutiliza un hash bcrypt que ya existe en tu dump.
+-- Así evitamos inventar un hash incompatible.
+-- Luego, si querés, cambiás las claves desde la app.
+--
+-- Usuario ADMIN:
+-- username: admin.test
+-- correo: admin.test@ipmanager.local
+--
+-- Usuario VIEWER:
+-- username: viewer.test
+-- correo: viewer.test@ipmanager.local
+--
+-- La contraseña real depende del hash que ya usa tu app actualmente.
+-- Si querés una contraseña conocida exacta, luego te doy script Java para generarla.
+
+INSERT INTO `app_users`
+(`id`, `apellido1`, `apellido2`, `correo`, `created_at`, `created_by`, `enabled`, `nombre`, `password`, `role`, `updated_at`, `updated_by`, `username`)
+VALUES
+(1, 'Admin', 'Pruebas', 'admin.test@ipmanager.local', NOW(6), 'system', b'1', 'Administrador', 'TU_HASH_BCRYPT_ADMIN', 'ADMIN', NOW(6), 'system', 'admin.test'),
+(2, 'Viewer', 'Pruebas', 'viewer.test@ipmanager.local', NOW(6), 'system', b'1', 'Visualizador', 'TU_HASH_BCRYPT_VIEWER', 'VIEWER', NOW(6), 'system', 'viewer.test');
+
+-- =========================================================
+-- DATOS: networks
+-- =========================================================
+-- Casos incluidos:
+-- 1. Red normal sin conflicto
+-- 2. Red normal diferente
+-- 3. Red con placeholder 0.0.0.0
+-- 4. Red histórica
+-- 5. Red que traslapa parcialmente con otra
+-- 6. WAN válida para edición/prueba
+-- 7. Otro caso con /16
+-- 8. Caso con traslape aceptado
+
+INSERT INTO `networks`
+(`id`, `network_ip`, `cidr`, `network_address_bigint`, `broadcast_address_bigint`, `created_at`, `created_by`, `enlace`, `es_historico`, `motivo_justificacion`, `nombre_lugar`, `updated_at`, `updated_by`, `wan_broadcast`, `wan_cidr`, `wan_ip`, `wan_ip1`, `wan_ip2`, `tecnologia`, `tipo_lugar`, `velocidad`, `wan_ip_1`, `wan_ip_2`, `acepta_traslape`, `traslape_aceptado_at`, `traslape_aceptado_por`)
+VALUES
+(1001, '10.30.160.0', 24, NULL, NULL, NOW(), 'system', '90000001', b'0', NULL, 'Prueba San José Centro', NOW(6), 'system', '192.168.10.3', 30, '192.168.10.0', '192.168.10.1', '192.168.10.2', 'Fibra', 'Sucursal', '100 Mbps', NULL, NULL, b'0', NULL, NULL),
+
+(1002, '10.30.166.0', 24, NULL, NULL, NOW(), 'system', '90000002', b'0', NULL, 'Prueba Heredia', NOW(6), 'system', '192.168.10.7', 30, '192.168.10.4', '192.168.10.5', '192.168.10.6', 'Fibra', 'Área de Salud', '200 Mbps', NULL, NULL, b'0', NULL, NULL),
+
+(1003, '0.0.0.0', 0, NULL, NULL, NOW(), 'system', '90000003', b'1', NULL, 'Prueba Placeholder', NOW(6), 'system', '0.0.0.3', 0, '0.0.0.0', '0.0.0.1', '0.0.0.2', 'N/A', 'N/A', 'N/A', NULL, NULL, b'0', NULL, NULL),
+
+(1004, '10.50.94.0', 24, NULL, NULL, NOW(), 'system', '90000004', b'1', NULL, 'Prueba Limón Histórico', NOW(6), 'system', '192.168.20.3', 30, '192.168.20.0', '192.168.20.1', '192.168.20.2', 'Radio', 'PVP', '50 Mbps', NULL, NULL, b'0', NULL, NULL),
+
+(1005, '10.30.166.128', 25, NULL, NULL, NOW(), 'system', '90000005', b'0', NULL, 'Prueba Traslape Parcial', NOW(6), 'system', '192.168.30.3', 30, '192.168.30.0', '192.168.30.1', '192.168.30.2', 'Fibra', 'Clínica', '100 Mbps', NULL, NULL, b'0', NULL, NULL),
+
+(1006, '10.42.141.0', 24, NULL, NULL, NOW(), 'system', '90000006', b'0', NULL, 'Prueba Cartago', NOW(6), 'system', '192.168.40.3', 30, '192.168.40.0', '192.168.40.1', '192.168.40.2', 'MPLS', 'Hospital', '300 Mbps', NULL, NULL, b'0', NULL, NULL),
+
+(1007, '10.71.0.0', 16, NULL, NULL, NOW(), 'system', '90000007', b'0', NULL, 'Prueba San Ramón', NOW(6), 'system', '192.168.50.3', 30, '192.168.50.0', '192.168.50.1', '192.168.50.2', 'Fibra', 'Hospital', '500 Mbps', NULL, NULL, b'0', NULL, NULL),
+
+(1008, '10.30.166.64', 26, NULL, NULL, NOW(), 'system', '90000008', b'0', 'Se permite para validar flujo de justificación en pruebas', 'Prueba Traslape Aceptado', NOW(6), 'system', '192.168.60.3', 30, '192.168.60.0', '192.168.60.1', '192.168.60.2', 'Fibra', 'Laboratorio', '50 Mbps', NULL, NULL, b'1', NOW(6), 'admin.test'),
+
+(1009, '10.139.3.0', 24, NULL, NULL, NOW(), 'system', '90000009', b'0', NULL, 'Prueba Zona Sur', NOW(6), 'system', '10.108.85.155', 29, '10.108.85.152', '10.108.85.153', '10.108.85.154', 'Enlace Dedicado', 'PVP', '30 Mbps', NULL, NULL, b'0', NULL, NULL),
+
+(1010, '172.20.1.0', 24, NULL, NULL, NOW(), 'system', '90000010', b'0', NULL, 'Prueba IDC', NOW(6), 'system', '192.168.70.7', 29, '192.168.70.0', '192.168.70.1', '192.168.70.2', 'LAN', 'IDC', '1 Gbps', NULL, NULL, b'0', NULL, NULL);
+
+-- =========================================================
+-- DATOS: audit_logs
+-- =========================================================
+INSERT INTO `audit_logs`
+(`id`, `action`, `created_at`, `detail`, `entity_id`, `entity_type`, `username`)
+VALUES
+(1, 'CREATE', NOW(6), 'Creación inicial de ambiente de pruebas', NULL, 'SYSTEM', 'system'),
+(2, 'CREATE', NOW(6), 'Carga de redes de prueba controladas', NULL, 'NETWORK', 'system');
+
+-- =========================================================
+-- ÍNDICES / PK
+-- =========================================================
+ALTER TABLE `app_users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UK_app_users_username` (`username`),
+  ADD UNIQUE KEY `UK_app_users_correo` (`correo`);
+
+ALTER TABLE `assigned_ips`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_assigned_ips_network_id` (`network_id`);
+
+ALTER TABLE `audit_logs`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `modules`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UK_modules_code` (`code`);
+
+ALTER TABLE `networks`
+  ADD PRIMARY KEY (`id`);
+
+-- =========================================================
+-- AUTO_INCREMENT
+-- =========================================================
+ALTER TABLE `app_users`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+ALTER TABLE `assigned_ips`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+ALTER TABLE `audit_logs`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+ALTER TABLE `modules`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+ALTER TABLE `networks`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2000;
+
+-- =========================================================
+-- FK
+-- =========================================================
+ALTER TABLE `assigned_ips`
+  ADD CONSTRAINT `fk_assigned_ips_network`
+  FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+COMMIT;
+
+
+
+
+
+
+Una vez creado pasar estoi uno a uno
+
+CREATE TABLE `user_module_access` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `module_id` bigint(20) NOT NULL,
+  `access_level` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_user_module` (`user_id`, `module_id`),
+  KEY `fk_user_module_user` (`user_id`),
+  KEY `fk_user_module_module` (`module_id`),
+  CONSTRAINT `fk_user_module_user`
+    FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_user_module_module`
+    FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+INSERT INTO `user_module_access` (`user_id`, `module_id`, `access_level`) VALUES
+(2, 1, 'VIEWER');
