@@ -9,4 +9,5 @@ import java.util.List;
 public interface UserModuleAccessRepository extends JpaRepository<UserModuleAccess, Long> {
     List<UserModuleAccess> findByUser(AppUser user);
     void deleteByUser(AppUser user);
+    void deleteByUserId(Long userId);
 }

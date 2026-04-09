@@ -1,4 +1,5 @@
 package com.example.ipmanager.service;
+import com.example.ipmanager.repository.UserModuleAccessRepository;
 
 import com.example.ipmanager.model.AccessLevel;
 import com.example.ipmanager.model.AppUser;
@@ -20,14 +21,17 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppUserRepository appUserRepository;
     private final ModuleRepository moduleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserModuleAccessRepository userModuleAccessRepository;
 
     public AppUserServiceImpl(AppUserRepository appUserRepository,
-                              ModuleRepository moduleRepository,
-                              PasswordEncoder passwordEncoder) {
-        this.appUserRepository = appUserRepository;
-        this.moduleRepository = moduleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+                          ModuleRepository moduleRepository,
+                          PasswordEncoder passwordEncoder,
+                          UserModuleAccessRepository userModuleAccessRepository) {
+    this.appUserRepository = appUserRepository;
+    this.moduleRepository = moduleRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.userModuleAccessRepository = userModuleAccessRepository;
+}
 
     @Override
     public List<AppUser> findAll() {
@@ -62,7 +66,13 @@ public class AppUserServiceImpl implements AppUserService {
         }
 
         // Limpiar accesos actuales y reconstruir desde el formulario
-        entity.getModuleAccesses().clear();
+        // Si es edición, borrar accesos actuales en BD para evitar duplicados
+            if (entity.getId() != null) {
+                userModuleAccessRepository.deleteByUserId(entity.getId());
+            }
+
+            // Limpiar accesos en memoria y reconstruir desde el formulario
+            entity.getModuleAccesses().clear();
 
         if (user.getModuleAccesses() != null) {
             for (UserModuleAccess incoming : user.getModuleAccesses()) {
