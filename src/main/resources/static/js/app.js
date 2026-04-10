@@ -25,7 +25,7 @@ const validationState = {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.body.classList.add("sidebar-collapsed");
+    //document.body.classList.add("sidebar-collapsed");
 
     insertarBloqueTraslapeCrear();
 

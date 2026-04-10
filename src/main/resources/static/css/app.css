@@ -1,5 +1,6 @@
 :root {
     --sidebar-width: 210px;
+    --sidebar-collapsed-width: 72px;
     --bg-main: #f5f7fb;
     --card-bg: #ffffff;
     --primary: #0d6efd;
@@ -35,11 +36,19 @@ html, body {
     padding: 18px 10px;
     flex-shrink: 0;
     min-height: 100vh;
+    transition: width 0.25s ease, padding 0.25s ease;
+}
+
+.simple-sidebar-logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 8px;
 }
 
 .simple-sidebar-logo {
     text-align: center;
-    margin-bottom: 8px;
 }
 
 .simple-sidebar-logo img {
@@ -49,6 +58,25 @@ html, body {
     background: rgba(255, 255, 255, 0.14);
     border-radius: 14px;
     padding: 6px;
+    transition: width 0.25s ease, height 0.25s ease;
+}
+
+.toggle-sidebar-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 8px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.toggle-sidebar-btn:hover {
+    background: rgba(255,255,255,0.3);
 }
 
 .simple-sidebar-brand {
@@ -56,6 +84,7 @@ html, body {
     font-size: 32px;
     font-weight: 800;
     margin-bottom: 16px;
+    transition: opacity 0.2s ease;
 }
 
 .simple-sidebar-user {
@@ -63,6 +92,7 @@ html, body {
     border-radius: 14px;
     padding: 12px;
     margin-bottom: 16px;
+    transition: opacity 0.2s ease, max-height 0.2s ease, margin 0.2s ease, padding 0.2s ease;
 }
 
 .simple-sidebar-user-name {
@@ -85,7 +115,9 @@ html, body {
 
 .simple-sidebar-link,
 .simple-sidebar-logout-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     width: 100%;
     text-decoration: none;
     color: #ffffff;
@@ -95,7 +127,7 @@ html, body {
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 12px;
     padding: 12px 14px;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, padding 0.2s ease, justify-content 0.2s ease;
 }
 
 .simple-sidebar-link:hover,
@@ -110,6 +142,20 @@ html, body {
 
 .simple-sidebar-logout-btn {
     cursor: pointer;
+}
+
+.sidebar-link-icon {
+    min-width: 22px;
+    width: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.sidebar-link-full {
+    display: inline;
 }
 
 /* CONTENT */
@@ -195,6 +241,52 @@ html, body {
     flex-wrap: wrap;
 }
 
+/* ESTADO COLAPSADO */
+body.sidebar-collapsed .simple-sidebar {
+    width: var(--sidebar-collapsed-width);
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+body.sidebar-collapsed .simple-sidebar-logo img {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+}
+
+body.sidebar-collapsed .simple-sidebar-brand {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+body.sidebar-collapsed .simple-sidebar-user {
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body.sidebar-collapsed .simple-sidebar-link,
+body.sidebar-collapsed .simple-sidebar-logout-btn {
+    justify-content: center;
+    padding: 10px 6px;
+}
+
+body.sidebar-collapsed .sidebar-link-full {
+    display: none;
+}
+
+body.sidebar-collapsed .sidebar-link-icon {
+    margin-right: 0;
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    font-size: 18px;
+}
+
 @media (max-width: 768px) {
     .layout {
         flex-direction: column;
@@ -212,62 +304,35 @@ html, body {
     .top-header-row {
         flex-direction: column;
     }
-}
 
-/* CONTENEDOR LOGO + BOTÓN */
-.simple-sidebar-logo-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
+    body.sidebar-collapsed .simple-sidebar {
+        width: 100%;
+    }
 
-/* BOTÓN TOGGLE */
-.toggle-sidebar-btn {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: #fff;
-    font-size: 18px;
-    border-radius: 8px;
-    padding: 4px 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
+    body.sidebar-collapsed .simple-sidebar-brand,
+    body.sidebar-collapsed .simple-sidebar-user {
+        opacity: 1;
+        max-height: none;
+        overflow: visible;
+        margin-bottom: 16px;
+        padding: 12px;
+        height: auto;
+    }
 
-.toggle-sidebar-btn:hover {
-    background: rgba(255,255,255,0.3);
-}
+    body.sidebar-collapsed .simple-sidebar-link,
+    body.sidebar-collapsed .simple-sidebar-logout-btn {
+        justify-content: flex-start;
+        padding: 12px 14px;
+    }
 
-/* ESTADO COLAPSADO */
-body.sidebar-collapsed .simple-sidebar {
-    width: 70px;
-}
+    body.sidebar-collapsed .sidebar-link-full {
+        display: inline;
+    }
 
-/* OCULTAR TEXTO CUANDO COLAPSADO */
-body.sidebar-collapsed .simple-sidebar-brand,
-body.sidebar-collapsed .simple-sidebar-user,
-body.sidebar-collapsed .simple-sidebar-link,
-body.sidebar-collapsed .simple-sidebar-logout-btn {
-    display: none;
-}
-
-/* CENTRAR SOLO ICONO LOGO */
-body.sidebar-collapsed .simple-sidebar-logo img {
-    width: 40px;
-    height: 40px;
-}
-
-.sidebar-icon {
-    font-size: 18px;
-    margin-right: 10px;
-    min-width: 20px;
-    text-align: center;
-}
-
-/* cuando está colapsado */
-body.sidebar-collapsed .sidebar-icon {
-    margin-right: 0;
+    body.sidebar-collapsed .sidebar-link-icon {
+        margin-right: 12px;
+        width: 22px;
+        min-width: 22px;
+        height: auto;
+    }
 }
