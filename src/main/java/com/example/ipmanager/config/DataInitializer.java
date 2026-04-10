@@ -1,4 +1,4 @@
-/*package com.example.ipmanager.config;
+package com.example.ipmanager.config;
 
 import com.example.ipmanager.model.AppUser;
 import com.example.ipmanager.repository.AppUserRepository;
@@ -17,7 +17,7 @@ public class DataInitializer implements CommandLineRunner {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
+    /*@Override
     public void run(String... args) {
         if (!appUserRepository.existsByUsername("admin")) {
                   AppUser admin = new AppUser(
@@ -35,7 +35,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 }*/
 
-package com.example.ipmanager.config;
+/*package com.example.ipmanager.config;
 
 import com.example.ipmanager.model.AccessLevel;
 import com.example.ipmanager.model.AppUser;
@@ -103,4 +103,4 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
     }
-}
+}*/
