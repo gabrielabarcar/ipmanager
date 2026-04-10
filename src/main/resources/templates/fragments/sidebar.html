@@ -4,8 +4,14 @@
 <body>
 <div th:fragment="sidebar">
     <aside class="simple-sidebar">
-        <div class="simple-sidebar-logo">
-            <img th:src="@{/images/logo-ccss.png}" alt="Logo CCSS">
+        <div class="simple-sidebar-logo-container">
+            <div class="simple-sidebar-logo">
+                <img th:src="@{/images/logo-ccss.png}" alt="Logo CCSS">
+            </div>
+
+            <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+                ☰
+            </button>
         </div>
 
         <div class="simple-sidebar-brand">

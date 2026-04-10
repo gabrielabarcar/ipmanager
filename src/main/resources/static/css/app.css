@@ -213,3 +213,49 @@ html, body {
         flex-direction: column;
     }
 }
+
+/* CONTENEDOR LOGO + BOTÓN */
+.simple-sidebar-logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* BOTÓN TOGGLE */
+.toggle-sidebar-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 8px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.toggle-sidebar-btn:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* ESTADO COLAPSADO */
+body.sidebar-collapsed .simple-sidebar {
+    width: 70px;
+}
+
+/* OCULTAR TEXTO CUANDO COLAPSADO */
+body.sidebar-collapsed .simple-sidebar-brand,
+body.sidebar-collapsed .simple-sidebar-user,
+body.sidebar-collapsed .simple-sidebar-link,
+body.sidebar-collapsed .simple-sidebar-logout-btn {
+    display: none;
+}
+
+/* CENTRAR SOLO ICONO LOGO */
+body.sidebar-collapsed .simple-sidebar-logo img {
+    width: 40px;
+    height: 40px;
+}
