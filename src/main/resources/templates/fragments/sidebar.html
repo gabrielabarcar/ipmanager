@@ -31,14 +31,31 @@
 
         <nav class="simple-sidebar-menu">
             <a th:each="m : ${allowedModules}"
-               th:href="@{${m.path}}"
-               class="simple-sidebar-link"
-               th:text="${m.name}">
-                Módulo
+                th:href="@{${m.path}}"
+                class="simple-sidebar-link"
+                th:title="${m.name}">
+
+                <!-- ICONO -->
+                <i class="sidebar-icon"
+                    th:classappend="
+                    ${m.code == 'REDES'} ? 'bi bi-diagram-3' :
+                    (${m.code == 'USUARIOS'} ? 'bi bi-people' :
+                    (${m.code == 'BITACORA'} ? 'bi bi-journal-text' :
+                    'bi bi-circle'))">
+                </i>
+
+                <!-- TEXTO NORMAL -->
+                <span class="sidebar-link-full"
+                    th:text="${m.name}">
+                </span>
             </a>
 
             <form th:action="@{/logout}" method="post" class="simple-sidebar-logout-form">
-                <button type="submit" class="simple-sidebar-logout-btn">Salir</button>
+                <button type="submit" class="simple-sidebar-logout-btn" title="Salir">
+                    <i class="sidebar-icon bi bi-box-arrow-right"></i>
+
+                    <span class="sidebar-link-full">Salir</span>
+                </button>
             </form>
         </nav>
     </aside>
